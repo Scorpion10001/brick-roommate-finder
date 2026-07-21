@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - BRICK</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="navbar-container">
+      <a href="../index.html" class="navbar-brand">
+        <img src="../images/brick-logo-new.png" alt="BRICK Logo">
+        BRICK
+      </a>
+      <div class="nav-content">
+        <div class="navbar-user">
+          <span class="user-name" id="user-name">User</span>
+          <span class="user-type badge badge-primary">Student</span>
+          <button class="btn-logout" onclick="logoutUser()">Logout</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">Dashboard</div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item">📊 Dashboard</a>
+        <a href="roommates.html" class="nav-item">👥 Find Roommates</a>
+        <a href="apartments.html" class="nav-item">🏠 Browse Apartments</a>
+        <a href="savings.html" class="nav-item">💰 Savings Plan</a>
+        <a href="profile.html" class="nav-item active">⚙️ Profile</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="dashboard-content">
+      <div class="dashboard-header">
+        <div>
+          <h1>My Profile</h1>
+          <p style="color: var(--gray); margin: 0;">View and update your profile information</p>
+        </div>
+        <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+      </div>
+
+      <!-- Alert Container -->
+      <div id="alert-container"></div>
+
+      <!-- Profile Section -->
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Personal Information</h3>
+            </div>
+
+            <form id="profileForm">
+              <div class="card-body" style="display: flex; flex-direction: column; gap: var(--spacing-lg);">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="name">Full Name</label>
+                      <input type="text" id="name" required>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="email">Email Address</label>
+                      <input type="email" id="email" disabled>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="budget">Monthly Budget ($)</label>
+                      <input type="number" id="budget" required>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="movedate">Preferred Move-in Date</label>
+                      <input type="date" id="movedate" required>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="location">Preferred Location</label>
+                      <select id="location" required>
+                        <option value="">Select a location</option>
+                        <option value="Downtown">Downtown</option>
+                        <option value="Campus Area">Campus Area</option>
+                        <option value="Midtown">Midtown</option>
+                        <option value="Riverside">Riverside</option>
+                        <option value="West Side">West Side</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="sleep">Sleep Schedule</label>
+                      <select id="sleep" required>
+                        <option value="">Select your sleep schedule</option>
+                        <option value="early">Early Bird (Sleep before 10 PM)</option>
+                        <option value="mixed">Mixed (Flexible)</option>
+                        <option value="night">Night Owl (Sleep after 12 AM)</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="bio">About You</label>
+                  <textarea id="bio" placeholder="Tell us about yourself..."></textarea>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Cleanliness Level (1-10): <strong id="clean-value">5</strong></label>
+                      <input type="range" id="cleanliness" min="1" max="10" value="5" onchange="updateSlider(this, 'clean-value')">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Noise Level Tolerance (1-10): <strong id="noise-value">5</strong></label>
+                      <input type="range" id="noise" min="1" max="10" value="5" onchange="updateSlider(this, 'noise-value')">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Social Level (1-10): <strong id="social-value">5</strong></label>
+                      <input type="range" id="social" min="1" max="10" value="5" onchange="updateSlider(this, 'social-value')">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-footer">
+                <button type="submit" class="btn btn-accent">Save Changes</button>
+                <button type="button" class="btn btn-outline" onclick="resetForm()">Cancel</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Privacy & Preferences -->
+          <div class="card" style="margin-top: var(--spacing-lg);">
+            <div class="card-header">
+              <h3 class="card-title">Privacy & Settings</h3>
+            </div>
+
+            <div class="card-body" style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+              <label style="display: flex; align-items: center; gap: var(--spacing-md); cursor: pointer; margin: 0;">
+                <input type="checkbox" id="public-profile" checked>
+                <span>Make my profile visible to other students</span>
+              </label>
+
+              <label style="display: flex; align-items: center; gap: var(--spacing-md); cursor: pointer; margin: 0;">
+                <input type="checkbox" id="email-notifications" checked>
+                <span>Receive email notifications for matches and inquiries</span>
+              </label>
+
+              <label style="display: flex; align-items: center; gap: var(--spacing-md); cursor: pointer; margin: 0;">
+                <input type="checkbox" id="sms-notifications">
+                <span>Receive SMS notifications for important updates</span>
+              </label>
+            </div>
+
+            <div class="card-footer">
+              <button type="button" class="btn btn-accent" onclick="saveSettings()">Save Settings</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Stats -->
+        <div class="col-lg-4">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h3 class="card-title">Profile Completion</h3>
+            </div>
+            <div class="card-body">
+              <div style="text-align: center; padding: var(--spacing-lg);">
+                <div style="font-size: 2.5rem; font-weight: 700; color: var(--accent); margin-bottom: var(--spacing-md);">100%</div>
+                <div class="progress-bar" style="height: 12px;">
+                  <div class="progress-fill" style="width: 100%;"></div>
+                </div>
+                <p style="margin: var(--spacing-md) 0 0; color: var(--gray); font-size: 0.9rem;">Your profile is complete! This helps us find better matches.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mb-4">
+            <div class="card-header">
+              <h3 class="card-title">Account Stats</h3>
+            </div>
+            <div class="card-body" style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-md); background-color: var(--very-light); border-radius: var(--radius-md);">
+                <span style="color: var(--gray);">Profile Views</span>
+                <span style="color: var(--primary); font-weight: 700; font-size: 1.25rem;">24</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-md); background-color: var(--very-light); border-radius: var(--radius-md);">
+                <span style="color: var(--gray);">Matches Received</span>
+                <span style="color: var(--accent); font-weight: 700; font-size: 1.25rem;">3</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-md); background-color: var(--very-light); border-radius: var(--radius-md);">
+                <span style="color: var(--gray);">Inquiries Sent</span>
+                <span style="color: var(--success); font-weight: 700; font-size: 1.25rem;">5</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-md); background-color: var(--very-light); border-radius: var(--radius-md);">
+                <span style="color: var(--gray);">Member Since</span>
+                <span style="color: var(--primary); font-weight: 700; font-size: 1rem;">Today</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Danger Zone</h3>
+            </div>
+            <div class="card-body">
+              <button class="btn btn-danger btn-block" style="width: 100%;" onclick="deactivateAccount()">Deactivate Account</button>
+              <p style="color: var(--gray); font-size: 0.85rem; margin: var(--spacing-md) 0 0; text-align: center;">This action cannot be undone</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/mockData.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/navigation.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAuth();
+      loadProfile();
+      document.getElementById('profileForm').addEventListener('submit', handleProfileUpdate);
+    });
+
+    function loadProfile() {
+      const user = window.authManager.getCurrentUser();
+      document.getElementById('user-name').textContent = user.name;
+
+      document.getElementById('name').value = user.name;
+      document.getElementById('email').value = user.email;
+      document.getElementById('budget').value = user.budget;
+      document.getElementById('movedate').value = user.moveInDate;
+      document.getElementById('location').value = user.location;
+      document.getElementById('sleep').value = user.sleepSchedule;
+      document.getElementById('cleanliness').value = user.cleanliness;
+      document.getElementById('noise').value = user.noise;
+      document.getElementById('social').value = user.social;
+      document.getElementById('bio').value = user.bio;
+
+      updateSlider(document.getElementById('cleanliness'), 'clean-value');
+      updateSlider(document.getElementById('noise'), 'noise-value');
+      updateSlider(document.getElementById('social'), 'social-value');
+    }
+
+    function updateSlider(slider, labelId) {
+      document.getElementById(labelId).textContent = slider.value;
+    }
+
+    function handleProfileUpdate(e) {
+      e.preventDefault();
+
+      const updates = {
+        name: document.getElementById('name').value,
+        budget: parseInt(document.getElementById('budget').value),
+        moveInDate: document.getElementById('movedate').value,
+        location: document.getElementById('location').value,
+        sleepSchedule: document.getElementById('sleep').value,
+        cleanliness: parseInt(document.getElementById('cleanliness').value),
+        noise: parseInt(document.getElementById('noise').value),
+        social: parseInt(document.getElementById('social').value),
+        bio: document.getElementById('bio').value
+      };
+
+      const user = window.authManager.getCurrentUser();
+      const result = window.authManager.updateStudentProfile(user.id, updates);
+
+      if (result.success) {
+        showSuccess('Profile updated successfully!');
+      } else {
+        showError('Error updating profile');
+      }
+    }
+
+    function resetForm() {
+      loadProfile();
+      showSuccess('Changes discarded');
+    }
+
+    function saveSettings() {
+      showSuccess('Settings saved successfully!');
+    }
+
+    function deactivateAccount() {
+      if (confirm('Are you sure you want to deactivate your account? This action cannot be undone.')) {
+        showSuccess('Account deactivated. Redirecting...');
+        setTimeout(() => {
+          window.authManager.logout();
+          window.location.href = '../index.html';
+        }, 1500);
+      }
+    }
+
+    function showSuccess(message) {
+      const container = document.getElementById('alert-container');
+      const alert = document.createElement('div');
+      alert.className = 'alert alert-success';
+      alert.textContent = message;
+      container.innerHTML = '';
+      container.appendChild(alert);
+
+      setTimeout(() => {
+        alert.remove();
+      }, 3000);
+    }
+
+    function showError(message) {
+      const container = document.getElementById('alert-container');
+      const alert = document.createElement('div');
+      alert.className = 'alert alert-error';
+      alert.textContent = message;
+      container.innerHTML = '';
+      container.appendChild(alert);
+
+      setTimeout(() => {
+        alert.remove();
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

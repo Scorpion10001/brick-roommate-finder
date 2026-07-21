@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browse Apartments - BRICK</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="navbar-container">
+      <a href="../index.html" class="navbar-brand">
+        <img src="../images/brick-logo-new.png" alt="BRICK Logo">
+        BRICK
+      </a>
+      <div class="nav-content">
+        <div class="navbar-user">
+          <span class="user-name" id="user-name">User</span>
+          <span class="user-type badge badge-primary">Student</span>
+          <button class="btn-logout" onclick="logoutUser()">Logout</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">Dashboard</div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item">📊 Dashboard</a>
+        <a href="roommates.html" class="nav-item">👥 Find Roommates</a>
+        <a href="apartments.html" class="nav-item active">🏠 Browse Apartments</a>
+        <a href="savings.html" class="nav-item">💰 Savings Plan</a>
+        <a href="profile.html" class="nav-item">⚙️ Profile</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="dashboard-content">
+      <div class="dashboard-header">
+        <div>
+          <h1>Browse Apartments</h1>
+          <p style="color: var(--gray); margin: 0;">Find the perfect home for you and your roommate</p>
+        </div>
+        <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="filter-group">
+          <div class="form-group mb-0">
+            <label for="filter-min-price" style="margin-bottom: var(--spacing-sm);">Min Price</label>
+            <input type="number" id="filter-min-price" placeholder="Min" onchange="applyFilters()">
+          </div>
+
+          <div class="form-group mb-0">
+            <label for="filter-max-price" style="margin-bottom: var(--spacing-sm);">Max Price</label>
+            <input type="number" id="filter-max-price" placeholder="Max" onchange="applyFilters()">
+          </div>
+
+          <div class="form-group mb-0">
+            <label for="filter-bedrooms" style="margin-bottom: var(--spacing-sm);">Bedrooms</label>
+            <select id="filter-bedrooms" onchange="applyFilters()">
+              <option value="">Any</option>
+              <option value="1">1 Bedroom</option>
+              <option value="2">2 Bedrooms</option>
+              <option value="3">3 Bedrooms</option>
+            </select>
+          </div>
+
+          <div class="filter-button">
+            <button class="btn btn-accent" onclick="applyFilters()">Search</button>
+            <button class="btn btn-outline" onclick="resetFilters()">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Apartments Grid -->
+      <div id="apartments-container" class="row">
+        <!-- Populated by JavaScript -->
+      </div>
+
+      <!-- No results message -->
+      <div id="no-results" style="text-align: center; padding: var(--spacing-2xl); display: none;">
+        <div style="font-size: 2rem; margin-bottom: var(--spacing-md);">🔍</div>
+        <h3>No apartments found</h3>
+        <p style="color: var(--gray);">Try adjusting your filters to see more results</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Apartment Detail Modal -->
+  <div id="apartmentModal" class="modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('apartmentModal')">×</button>
+      <div id="modal-body">
+        <!-- Populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/mockData.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/navigation.js"></script>
+
+  <script>
+    let allApartments = [];
+    let filteredApartments = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAuth();
+      loadApartments();
+    });
+
+    function loadApartments() {
+      const user = window.authManager.getCurrentUser();
+      document.getElementById('user-name').textContent = user.name;
+
+      allApartments = mockData.apartments;
+      filteredApartments = [...allApartments];
+      
+      renderApartments();
+    }
+
+    function renderApartments() {
+      const container = document.getElementById('apartments-container');
+      const noResults = document.getElementById('no-results');
+      
+      container.innerHTML = '';
+
+      if (filteredApartments.length === 0) {
+        noResults.style.display = 'block';
+        return;
+      }
+
+      noResults.style.display = 'none';
+
+      filteredApartments.forEach(apartment => {
+        const card = createApartmentCard(apartment);
+        container.appendChild(card);
+      });
+    }
+
+    function createApartmentCard(apartment) {
+      const div = document.createElement('div');
+      div.className = 'col-lg-4 col-md-6 mb-4';
+      
+      div.innerHTML = `
+        <div class="apartment-card">
+          <img src="${apartment.image}" alt="${apartment.name}" class="card-image">
+          <div class="card-content">
+            <h4 class="card-name">${apartment.name}</h4>
+            <p class="card-location">📍 ${apartment.address}</p>
+            
+            <p class="card-price">${formatCurrency(apartment.price)}<span style="font-size: 0.8rem; color: var(--gray);">/month</span></p>
+
+            <div class="card-details">
+              <div class="card-detail-item">
+                <span class="card-detail-label">Bedrooms</span>
+                <span class="card-detail-value">${apartment.bedrooms}</span>
+              </div>
+              <div class="card-detail-item">
+                <span class="card-detail-label">Bathrooms</span>
+                <span class="card-detail-value">${apartment.bathrooms}</span>
+              </div>
+            </div>
+
+            <div style="margin: var(--spacing-md) 0;">
+              <p style="color: var(--gray); font-size: 0.9rem; margin: 0;">Amenities:</p>
+              <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-sm); margin-top: var(--spacing-sm);">
+                ${apartment.amenities.map(amenity => `<span class="badge badge-primary">${amenity}</span>`).join('')}
+              </div>
+            </div>
+
+            <p style="color: var(--gray); font-size: 0.9rem; margin: var(--spacing-md) 0 0;">
+              ${apartment.description}
+            </p>
+
+            <div class="card-actions">
+              <button class="btn btn-accent" onclick="viewApartmentDetail('${apartment.id}')">View Details</button>
+              <button class="btn btn-success" onclick="inquireApartment('${apartment.id}')">Inquire</button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      return div;
+    }
+
+    function viewApartmentDetail(apartmentId) {
+      const apartment = allApartments.find(a => a.id === apartmentId);
+      if (!apartment) return;
+
+      const modalBody = document.getElementById('modal-body');
+
+      modalBody.innerHTML = `
+        <div>
+          <img src="${apartment.image}" alt="${apartment.name}" style="width: 100%; max-height: 300px; object-fit: cover; border-radius: var(--radius-lg); margin-bottom: var(--spacing-lg);">
+          
+          <h2 style="margin-bottom: var(--spacing-md);">${apartment.name}</h2>
+          
+          <p class="card-location" style="font-size: 1rem; margin-bottom: var(--spacing-lg);">📍 ${apartment.address}</p>
+          
+          <div style="background-color: var(--accent); color: white; padding: var(--spacing-lg); border-radius: var(--radius-md); margin-bottom: var(--spacing-lg); text-align: center;">
+            <p style="margin: 0; font-size: 0.9rem; opacity: 0.9;">Monthly Rent</p>
+            <p style="margin: var(--spacing-sm) 0 0; font-size: 2rem; font-weight: 700;">${formatCurrency(apartment.price)}</p>
+          </div>
+
+          <div class="row mb-4">
+            <div class="col-6">
+              <div style="background-color: var(--very-light); padding: var(--spacing-lg); border-radius: var(--radius-md); text-align: center;">
+                <p style="margin: 0; color: var(--gray); font-size: 0.85rem;">Bedrooms</p>
+                <p style="margin: var(--spacing-sm) 0 0; color: var(--primary); font-weight: 700; font-size: 1.5rem;">${apartment.bedrooms}</p>
+              </div>
+            </div>
+            <div class="col-6">
+              <div style="background-color: var(--very-light); padding: var(--spacing-lg); border-radius: var(--radius-md); text-align: center;">
+                <p style="margin: 0; color: var(--gray); font-size: 0.85rem;">Bathrooms</p>
+                <p style="margin: var(--spacing-sm) 0 0; color: var(--primary); font-weight: 700; font-size: 1.5rem;">${apartment.bathrooms}</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="background-color: var(--very-light); padding: var(--spacing-lg); border-radius: var(--radius-md); margin-bottom: var(--spacing-lg);">
+            <h5 style="color: var(--primary); margin-bottom: var(--spacing-md);">Description</h5>
+            <p style="margin: 0; color: var(--gray); line-height: 1.6;">${apartment.description}</p>
+          </div>
+
+          <div style="background-color: var(--very-light); padding: var(--spacing-lg); border-radius: var(--radius-md); margin-bottom: var(--spacing-lg);">
+            <h5 style="color: var(--primary); margin-bottom: var(--spacing-md);">Amenities</h5>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-md);">
+              ${apartment.amenities.map(amenity => `
+                <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                  <span style="color: var(--accent); font-weight: 700;">✓</span>
+                  <span style="color: var(--gray);">${amenity}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <div style="display: flex; gap: var(--spacing-md);">
+            <button class="btn btn-success" style="flex: 1;" onclick="inquireApartment('${apartmentId}'); closeModal('apartmentModal');">Send Inquiry</button>
+            <button class="btn btn-outline" style="flex: 1;" onclick="closeModal('apartmentModal');">Close</button>
+          </div>
+        </div>
+      `;
+
+      openModal('apartmentModal');
+    }
+
+    function inquireApartment(apartmentId) {
+      const apartment = allApartments.find(a => a.id === apartmentId);
+      if (apartment) {
+        showSuccess(`Inquiry sent for ${apartment.name}! The landlord will contact you soon.`);
+      }
+    }
+
+    function applyFilters() {
+      const minPrice = parseInt(document.getElementById('filter-min-price').value) || 0;
+      const maxPrice = parseInt(document.getElementById('filter-max-price').value) || Infinity;
+      const bedrooms = document.getElementById('filter-bedrooms').value;
+
+      filteredApartments = allApartments.filter(apartment => {
+        if (apartment.price < minPrice || apartment.price > maxPrice) return false;
+        if (bedrooms && apartment.bedrooms !== parseInt(bedrooms)) return false;
+        return true;
+      });
+
+      renderApartments();
+    }
+
+    function resetFilters() {
+      document.getElementById('filter-min-price').value = '';
+      document.getElementById('filter-max-price').value = '';
+      document.getElementById('filter-bedrooms').value = '';
+      filteredApartments = [...allApartments];
+      renderApartments();
+    }
+  </script>
+</body>
+</html>

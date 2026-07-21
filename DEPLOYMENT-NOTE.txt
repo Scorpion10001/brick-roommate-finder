@@ -1,0 +1,5 @@
+BRICK static deployment fix
+
+GitHub Pages: deploy the repository root from main.
+Netlify: this project is now static HTML. netlify.toml publishes the repository root.
+The unused Next.js/v0 placeholder scaffold was removed because Netlify detected it and built app/page.tsx instead of the BRICK HTML site.

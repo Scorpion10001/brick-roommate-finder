@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - BRICK</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="navbar-container">
+      <a href="index.html" class="navbar-brand">
+        <img src="images/brick-logo-new.png" alt="BRICK Logo">
+        BRICK
+      </a>
+      <div class="nav-content">
+        <div class="navbar-links">
+          <a href="signup-choice.html" class="btn btn-primary">Sign Up</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div class="auth-container">
+      <!-- Left Side Image -->
+      <div class="auth-image d-none d-md-flex">
+        <div class="auth-image-content">
+          <div style="font-size: 4rem; margin-bottom: var(--spacing-lg);">🔑</div>
+          <h2 style="margin-bottom: var(--spacing-md);">Welcome Back</h2>
+          <p>Access your BRICK account to find roommates, and track shared expenses.</p>
+          <div style="margin-top: var(--spacing-xl); color: rgba(255, 255, 255, 0.8);">
+            <p style="margin: 0;">🎯 Find compatible roommates</p>
+            <!-- <p style="margin: var(--spacing-sm) 0;">🏠 Manage your properties</p> -->
+            <p style="margin: var(--spacing-sm) 0;">💰 Track shared expenses</p>
+          </div>
+          <div style="margin-top: var(--spacing-xl); border-top: 1px solid rgba(255, 255, 255, 0.2); padding-top: var(--spacing-lg);">
+            <p style="margin: 0; font-size: 0.9rem; color: rgba(255, 255, 255, 0.8);">Don't have an account?</p>
+            <a href="signup-choice.html" class="btn btn-outline" style="margin-top: var(--spacing-md); border-color: white; color: white;">Create One</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side Form -->
+      <div class="auth-form">
+        <div class="auth-form-content">
+          <h1>Login to Your Account</h1>
+
+          <!-- Alert Container -->
+          <div id="alert-container"></div>
+
+          <form id="loginForm">
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" required placeholder="your@email.com">
+            </div>
+
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" id="password" required placeholder="••••••••">
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-lg);">
+              <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer; margin: 0;">
+                <input type="checkbox" id="remember">
+                <span style="color: var(--gray);">Remember me</span>
+              </label>
+              <a href="#" style="color: var(--accent); font-size: 0.9rem;">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" style="width: 100%; font-size: 1rem; padding: var(--spacing-md) var(--spacing-lg);">Login</button>
+          </form>
+
+          <div class="form-link">
+            Don't have an account? <a href="signup-choice.html">Sign up here</a>
+          </div>
+
+          <!-- Demo Credentials -->
+          <div style="background-color: var(--very-light); padding: var(--spacing-lg); border-radius: var(--radius-md); margin-top: var(--spacing-xl);">
+            <p style="font-weight: 600; color: var(--primary); margin-bottom: var(--spacing-md);">Demo Credentials:</p>
+            <div style="font-size: 0.9rem; color: var(--gray);">
+              <p style="margin: 0 0 var(--spacing-sm) 0;"><strong>Student:</strong> sarah@university.edu</p>
+              <!-- <p style="margin: 0 0 var(--spacing-sm) 0;"><strong>Landlord:</strong> landlord1@properties.com</p> -->
+              <p style="margin: 0; color: var(--accent); font-size: 0.85rem;">* Use any password for demo</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/mockData.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/navigation.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('loginForm').addEventListener('submit', handleLogin);
+    });
+
+    function handleLogin(e) {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      if (!email || !password) {
+        showError('Please enter email and password');
+        return;
+      }
+
+      const result = window.authManager.login(email, password);
+
+      if (result.success) {
+        const userType = result.user.type;
+        showSuccess('Login successful! Redirecting...');
+        
+        setTimeout(() => {
+          if (userType === 'student') {
+            window.location.href = 'student/dashboard.html';
+          } else {
+            window.location.href = 'landlord/dashboard.html';
+          }
+        }, 1500);
+      } else {
+        showError(result.error);
+      }
+    }
+
+    function showError(message) {
+      const container = document.getElementById('alert-container');
+      const alert = document.createElement('div');
+      alert.className = 'alert alert-error';
+      alert.textContent = message;
+      container.innerHTML = '';
+      container.appendChild(alert);
+
+      setTimeout(() => {
+        alert.remove();
+      }, 3000);
+    }
+
+    function showSuccess(message) {
+      const container = document.getElementById('alert-container');
+      const alert = document.createElement('div');
+      alert.className = 'alert alert-success';
+      alert.textContent = message;
+      container.innerHTML = '';
+      container.appendChild(alert);
+    }
+  </script>
+</body>
+</html>

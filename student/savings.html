@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Savings Plan - BRICK</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="navbar-container">
+      <a href="../index.html" class="navbar-brand">
+        <img src="../images/brick-logo-new.png" alt="BRICK Logo">
+        BRICK
+      </a>
+      <div class="nav-content">
+        <div class="navbar-user">
+          <span class="user-name" id="user-name">User</span>
+          <span class="user-type badge badge-primary">Student</span>
+          <button class="btn-logout" onclick="logoutUser()">Logout</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">Dashboard</div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item">📊 Dashboard</a>
+        <a href="roommates.html" class="nav-item">👥 Find Roommates</a>
+        <a href="apartments.html" class="nav-item">🏠 Browse Apartments</a>
+        <a href="savings.html" class="nav-item active">💰 Savings Plan</a>
+        <a href="profile.html" class="nav-item">⚙️ Profile</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="dashboard-content">
+      <div class="dashboard-header">
+        <div>
+          <h1>Shared Expenses & Savings Plan</h1>
+          <p style="color: var(--gray); margin: 0;">Track monthly rent and shared expenses with your roommate</p>
+        </div>
+        <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+      </div>
+
+      <!-- Active Plans -->
+      <h2 style="margin-bottom: var(--spacing-lg);">Your Savings Plans</h2>
+      <div id="plans-container">
+        <!-- Populated by JavaScript -->
+      </div>
+
+      <!-- No Plans Message -->
+      <div id="no-plans" style="background-color: var(--very-light); padding: var(--spacing-2xl); border-radius: var(--radius-lg); text-align: center; display: none;">
+        <div style="font-size: 2rem; margin-bottom: var(--spacing-md);">💭</div>
+        <h3>No savings plans yet</h3>
+        <p style="color: var(--gray); margin-bottom: var(--spacing-lg);">Create a savings plan with your matched roommate to track shared expenses and manage rent payments together.</p>
+        <a href="roommates.html" class="btn btn-accent">Find a Roommate</a>
+      </div>
+
+      <!-- Sample Plans Section -->
+      <div style="margin-top: var(--spacing-2xl); padding: var(--spacing-xl); background-color: var(--very-light); border-radius: var(--radius-lg);">
+        <h3 style="color: var(--primary); margin-bottom: var(--spacing-lg);">How Savings Plans Work</h3>
+        
+        <div class="row">
+          <div class="col-md-4 mb-4">
+            <div style="text-align: center;">
+              <div style="font-size: 2rem; margin-bottom: var(--spacing-md);">1️⃣</div>
+              <h5 style="color: var(--primary);">Find & Match</h5>
+              <p style="color: var(--gray);">Find a compatible roommate and agree to live together</p>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div style="text-align: center;">
+              <div style="font-size: 2rem; margin-bottom: var(--spacing-md);">2️⃣</div>
+              <h5 style="color: var(--primary);">Create Plan</h5>
+              <p style="color: var(--gray);">Create a shared savings plan to split rent monthly</p>
+            </div>
+          </div>
+          <div class="col-md-4 mb-4">
+            <div style="text-align: center;">
+              <div style="font-size: 2rem; margin-bottom: var(--spacing-md);">3️⃣</div>
+              <h5 style="color: var(--primary);">Track & Manage</h5>
+              <p style="color: var(--gray);">Monitor contributions and stay on top of payments</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Benefits Section -->
+      <div style="margin-top: var(--spacing-xl); padding: var(--spacing-xl); background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); border-radius: var(--radius-lg); color: white;">
+        <h3 style="color: white; margin-bottom: var(--spacing-lg);">Why Use BRICK Savings Plans?</h3>
+        
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <div style="display: flex; gap: var(--spacing-md); align-items: flex-start;">
+              <div style="font-size: 1.5rem;">✓</div>
+              <div>
+                <h6 style="color: white; margin-bottom: var(--spacing-sm);">Avoid Conflicts</h6>
+                <p style="margin: 0; color: rgba(255, 255, 255, 0.9); font-size: 0.9rem;">Clear payment tracking prevents misunderstandings about who paid what</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <div style="display: flex; gap: var(--spacing-md); align-items: flex-start;">
+              <div style="font-size: 1.5rem;">✓</div>
+              <div>
+                <h6 style="color: white; margin-bottom: var(--spacing-sm);">Transparent</h6>
+                <p style="margin: 0; color: rgba(255, 255, 255, 0.9); font-size: 0.9rem;">Both roommates can see payment history and status</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <div style="display: flex; gap: var(--spacing-md); align-items: flex-start;">
+              <div style="font-size: 1.5rem;">✓</div>
+              <div>
+                <h6 style="color: white; margin-bottom: var(--spacing-sm);">Organized</h6>
+                <p style="margin: 0; color: rgba(255, 255, 255, 0.9); font-size: 0.9rem;">All payment records stored safely for future reference</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <div style="display: flex; gap: var(--spacing-md); align-items: flex-start;">
+              <div style="font-size: 1.5rem;">✓</div>
+              <div>
+                <h6 style="color: white; margin-bottom: var(--spacing-sm);">Reliable</h6>
+                <p style="margin: 0; color: rgba(255, 255, 255, 0.9); font-size: 0.9rem;">Automated reminders help you stay on top of due dates</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Savings Plan Detail Modal -->
+  <div id="planModal" class="modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('planModal')">×</button>
+      <div id="modal-body">
+        <!-- Populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/mockData.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/navigation.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAuth();
+      loadSavingsPlans();
+    });
+
+    function loadSavingsPlans() {
+      const user = window.authManager.getCurrentUser();
+      document.getElementById('user-name').textContent = user.name;
+
+      const userPlans = mockData.savingsPlans.filter(plan => 
+        plan.roommateIds.includes(user.id)
+      );
+
+      if (userPlans.length === 0) {
+        document.getElementById('plans-container').style.display = 'none';
+        document.getElementById('no-plans').style.display = 'block';
+        return;
+      }
+
+      document.getElementById('no-plans').style.display = 'none';
+      renderPlans(userPlans);
+    }
+
+    function renderPlans(plans) {
+      const container = document.getElementById('plans-container');
+      container.innerHTML = '';
+
+      plans.forEach(plan => {
+        const card = createPlanCard(plan);
+        container.appendChild(card);
+      });
+    }
+
+    function createPlanCard(plan) {
+      const div = document.createElement('div');
+      div.className = 'row mb-4';
+      
+      const totalMonths = plan.payments.length;
+      const paidMonths = plan.payments.filter(p => p.paid).length;
+      const savingsPercentage = (paidMonths / totalMonths) * 100;
+
+      div.innerHTML = `
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Shared Rental Plan</h3>
+              <span class="badge badge-accent">${paidMonths}/${totalMonths} Paid</span>
+            </div>
+
+            <div class="card-body">
+              <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                  <div style="background-color: var(--very-light); padding: var(--spacing-lg); border-radius: var(--radius-md); text-align: center;">
+                    <p style="margin: 0; color: var(--gray); font-size: 0.85rem;">Total Saved</p>
+                    <p style="margin: var(--spacing-sm) 0 0; color: var(--accent); font-weight: 700; font-size: 1.5rem;">${formatCurrency(plan.totalSaved)}</p>
+                  </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                  <div style="background-color: var(--very-light); padding: var(--spacing-lg); border-radius: var(--radius-md); text-align: center;">
+                    <p style="margin: 0; color: var(--gray); font-size: 0.85rem;">Monthly Amount</p>
+                    <p style="margin: var(--spacing-sm) 0 0; color: var(--accent); font-weight: 700; font-size: 1.5rem;">${formatCurrency(plan.splitAmount)}</p>
+                  </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                  <div style="background-color: var(--very-light); padding: var(--spacing-lg); border-radius: var(--radius-md); text-align: center;">
+                    <p style="margin: 0; color: var(--gray); font-size: 0.85rem;">Full Rent</p>
+                    <p style="margin: var(--spacing-sm) 0 0; color: var(--accent); font-weight: 700; font-size: 1.5rem;">${formatCurrency(plan.monthlyAmount)}</p>
+                  </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                  <div style="background-color: var(--very-light); padding: var(--spacing-lg); border-radius: var(--radius-md); text-align: center;">
+                    <p style="margin: 0; color: var(--gray); font-size: 0.85rem;">Rent Due</p>
+                    <p style="margin: var(--spacing-sm) 0 0; color: var(--accent); font-weight: 700; font-size: 1.5rem;">15th</p>
+                  </div>
+                </div>
+              </div>
+
+              <div style="margin-bottom: var(--spacing-lg);">
+                <p style="color: var(--gray); margin-bottom: var(--spacing-sm); font-size: 0.9rem;">Savings Progress: <strong>${savingsPercentage.toFixed(0)}%</strong></p>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${savingsPercentage}%;"></div>
+                </div>
+              </div>
+
+              <h5 style="color: var(--primary); margin-bottom: var(--spacing-lg);">Payment History</h5>
+
+              <div class="payment-table-wrapper" style="overflow-x: auto;">
+                <table class="payment-table">
+                  <thead>
+                    <tr>
+                      <th>Month</th>
+                      <th>Amount</th>
+                      <th>Status</th>
+                      <th>Date Paid</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${plan.payments.map(payment => `
+                      <tr>
+                        <td>${payment.month}</td>
+                        <td>${formatCurrency(payment.amount)}</td>
+                        <td>
+                          <span class="payment-status ${payment.paid ? 'paid' : 'pending'}">
+                            ${payment.paid ? '✓ Paid' : 'Pending'}
+                          </span>
+                        </td>
+                        <td>${payment.date ? formatDate(payment.date) : '-'}</td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+
+              <div style="display: flex; gap: var(--spacing-md); margin-top: var(--spacing-lg);">
+                <button class="btn btn-accent" onclick="recordPayment('${plan.id}')">Record Payment</button>
+                <button class="btn btn-outline" onclick="viewPlanDetails('${plan.id}')">View Details</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      return div;
+    }
+
+    function viewPlanDetails(planId) {
+      const plan = mockData.savingsPlans.find(p => p.id === planId);
+      if (!plan) return;
+
+      const modalBody = document.getElementById('modal-body');
+      const paidMonths = plan.payments.filter(p => p.paid).length;
+      const totalMonths = plan.payments.length;
+
+      modalBody.innerHTML = `
+        <div>
+          <h2 style="margin-bottom: var(--spacing-lg);">Savings Plan Details</h2>
+
+          <div class="row mb-4">
+            <div class="col-6">
+              <div style="background-color: var(--very-light); padding: var(--spacing-lg); border-radius: var(--radius-md);">
+                <p style="margin: 0; color: var(--gray); font-size: 0.85rem;">Started</p>
+                <p style="margin: var(--spacing-sm) 0 0; font-weight: 700; color: var(--primary);">${formatDate(plan.startDate)}</p>
+              </div>
+            </div>
+            <div class="col-6">
+              <div style="background-color: var(--very-light); padding: var(--spacing-lg); border-radius: var(--radius-md);">
+                <p style="margin: 0; color: var(--gray); font-size: 0.85rem;">Rent Due</p>
+                <p style="margin: var(--spacing-sm) 0 0; font-weight: 700; color: var(--primary);">Every ${plan.rentDueDate}th of Month</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); color: white; padding: var(--spacing-xl); border-radius: var(--radius-lg); text-align: center; margin-bottom: var(--spacing-lg);">
+            <p style="margin: 0; opacity: 0.9;">Combined Monthly Rent</p>
+            <p style="margin: var(--spacing-md) 0 0; font-size: 2.5rem; font-weight: 700;">${formatCurrency(plan.monthlyAmount)}</p>
+            <p style="margin: var(--spacing-md) 0 0; opacity: 0.9; font-size: 1rem;">Each roommate: ${formatCurrency(plan.splitAmount)}/month</p>
+          </div>
+
+          <h5 style="color: var(--primary); margin-bottom: var(--spacing-lg);">Payment Summary</h5>
+          <div class="row mb-4">
+            <div class="col-6">
+              <div style="background-color: #d4edda; padding: var(--spacing-lg); border-radius: var(--radius-md);">
+                <p style="margin: 0; color: #155724; font-size: 0.85rem;">Payments Made</p>
+                <p style="margin: var(--spacing-sm) 0 0; color: #155724; font-weight: 700; font-size: 1.5rem;">${paidMonths}/${totalMonths}</p>
+              </div>
+            </div>
+            <div class="col-6">
+              <div style="background-color: #fff3cd; padding: var(--spacing-lg); border-radius: var(--radius-md);">
+                <p style="margin: 0; color: #856404; font-size: 0.85rem;">Total Contributed</p>
+                <p style="margin: var(--spacing-sm) 0 0; color: #856404; font-weight: 700; font-size: 1.5rem;">${formatCurrency(plan.totalSaved)}</p>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-accent" style="width: 100%;" onclick="recordPayment('${planId}'); closeModal('planModal');">Record New Payment</button>
+        </div>
+      `;
+
+      openModal('planModal');
+    }
+
+    function recordPayment(planId) {
+      showSuccess('Payment recorded successfully! Thank you for keeping up with shared expenses.');
+    }
+  </script>
+</body>
+</html>

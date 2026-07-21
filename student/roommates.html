@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Roommates - BRICK</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="navbar-container">
+      <a href="../index.html" class="navbar-brand">
+        <img src="../images/brick-logo-new.png" alt="BRICK Logo">
+        BRICK
+      </a>
+      <div class="nav-content">
+        <div class="navbar-user">
+          <span class="user-name" id="user-name">User</span>
+          <span class="user-type badge badge-primary">Student</span>
+          <button class="btn-logout" onclick="logoutUser()">Logout</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">Dashboard</div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item">📊 Dashboard</a>
+        <a href="roommates.html" class="nav-item active">👥 Find Roommates</a>
+        <a href="apartments.html" class="nav-item">🏠 Browse Apartments</a>
+        <a href="savings.html" class="nav-item">💰 Savings Plan</a>
+        <a href="profile.html" class="nav-item">⚙️ Profile</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="dashboard-content">
+      <div class="dashboard-header">
+        <div>
+          <h1>Find Your Perfect Roommate</h1>
+          <p style="color: var(--gray); margin: 0;">Browse and match with compatible students</p>
+        </div>
+        <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="filter-group">
+          <div class="form-group mb-0" style="position: relative;">
+            <label for="filter-location" style="margin-bottom: var(--spacing-sm);">Location (Nigeria)</label>
+            <input type="text" id="filter-location" placeholder="Search location (e.g., Akobo, Ibadan)" style="position: relative; z-index: 10;" oninput="handleLocationInput(this.value)" onchange="applyFilters()">
+            <div id="location-suggestions" style="position: absolute; background: white; border: 1px solid var(--light-gray); border-radius: var(--radius-md); max-height: 200px; overflow-y: auto; width: 100%; display: none; z-index: 20; box-shadow: var(--shadow-md); top: 100%; left: 0; right: 0; margin-top: -8px;"></div>
+          </div>
+
+          <div class="form-group mb-0">
+            <label for="filter-gender" style="margin-bottom: var(--spacing-sm);">Looking for</label>
+            <select id="filter-gender" onchange="applyFilters()">
+              <option value="">Any Gender</option>
+              <option value="male">Male Roommate</option>
+              <option value="female">Female Roommate</option>
+            </select>
+          </div>
+
+          <div class="form-group mb-0">
+            <label for="filter-budget" style="margin-bottom: var(--spacing-sm);">Max Budget</label>
+            <input type="number" id="filter-budget" placeholder="Max budget" onchange="applyFilters()">
+          </div>
+
+          <div class="form-button">
+            <button class="btn btn-accent" onclick="applyFilters()">Apply Filters</button>
+            <button class="btn btn-outline" onclick="resetFilters()">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Roommates Grid -->
+      <div id="roommates-container" class="row">
+        <!-- Populated by JavaScript -->
+      </div>
+
+      <!-- No results message -->
+      <div id="no-results" style="text-align: center; padding: var(--spacing-2xl); display: none;">
+        <div style="font-size: 2rem; margin-bottom: var(--spacing-md);">🔍</div>
+        <h3>No roommates found</h3>
+        <p style="color: var(--gray);">Try adjusting your filters to see more results</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Roommate Detail Modal -->
+  <div id="roommateModal" class="modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('roommateModal')">×</button>
+      <div id="modal-body">
+        <!-- Populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/mockData.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/navigation.js"></script>
+
+  <script>
+    let allRoommates = [];
+    let filteredRoommates = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAuth();
+      loadRoommates();
+    });
+
+    function loadRoommates() {
+      const user = window.authManager.getCurrentUser();
+      document.getElementById('user-name').textContent = user.name;
+
+      // Get compatible roommates for this user
+      allRoommates = getCompatibleRoommates(user.id);
+      filteredRoommates = [...allRoommates];
+      
+      renderRoommates();
+    }
+
+    function renderRoommates() {
+      const container = document.getElementById('roommates-container');
+      const noResults = document.getElementById('no-results');
+      
+      container.innerHTML = '';
+
+      if (filteredRoommates.length === 0) {
+        noResults.style.display = 'block';
+        return;
+      }
+
+      noResults.style.display = 'none';
+
+      filteredRoommates.forEach(roommate => {
+        const card = createRoommateCard(roommate);
+        container.appendChild(card);
+      });
+    }
+
+    function createRoommateCard(roommate) {
+      const div = document.createElement('div');
+      div.className = 'col-lg-4 col-md-6 mb-4';
+      
+      const compatibilityColor = getCompatibilityColor(roommate.compatibility);
+      
+      div.innerHTML = `
+        <div class="roommate-card">
+          <img src="${roommate.image}" alt="${roommate.name}" class="card-image">
+          <div class="card-content">
+            <h4 class="card-name">${roommate.name}</h4>
+            <p class="card-location">📍 ${roommate.location}</p>
+            
+            <div class="compatibility-score">
+              <div class="score-circle" style="background-color: ${compatibilityColor};">
+                ${roommate.compatibility}%
+              </div>
+              <div class="score-info">
+                <h6 style="margin: 0; color: var(--primary);">Compatibility</h6>
+                <p style="margin: 0; color: var(--gray); font-size: 0.85rem;">Budget: $${roommate.budget}/month</p>
+              </div>
+            </div>
+
+            <div class="card-details">
+              <div class="card-detail-item">
+                <span class="card-detail-label">Cleanliness</span>
+                <span class="card-detail-value">${roommate.cleanliness}/10</span>
+              </div>
+              <div class="card-detail-item">
+                <span class="card-detail-label">Sleep</span>
+                <span class="card-detail-value" style="text-transform: capitalize; font-size: 0.85rem;">${roommate.sleepSchedule}</span>
+              </div>
+              <div class="card-detail-item">
+                <span class="card-detail-label">Social</span>
+                <span class="card-detail-value">${roommate.social}/10</span>
+              </div>
+              <div class="card-detail-item">
+                <span class="card-detail-label">Move In</span>
+                <span class="card-detail-value" style="font-size: 0.85rem;">${roommate.moveInDate.substring(5)}</span>
+              </div>
+            </div>
+
+            <p style="color: var(--gray); font-size: 0.9rem; margin: var(--spacing-md) 0; line-height: 1.4;">
+              "${roommate.bio}"
+            </p>
+
+            <div class="card-actions">
+              <button class="btn btn-accent" onclick="viewRoommateDetail('${roommate.userId}')">View Profile</button>
+              <button class="btn btn-success" onclick="sendMatch('${roommate.userId}')">✓ Match</button>
+              <button class="btn btn-danger" onclick="passRoommate('${roommate.userId}')">✕ Pass</button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      return div;
+    }
+
+    function viewRoommateDetail(studentId) {
+      const roommate = allRoommates.find(r => r.userId === studentId);
+      if (!roommate) return;
+
+      const modalBody = document.getElementById('modal-body');
+      const compatibilityColor = getCompatibilityColor(roommate.compatibility);
+
+      modalBody.innerHTML = `
+        <div style="text-align: center;">
+          <img src="${roommate.image}" alt="${roommate.name}" style="width: 100%; max-height: 300px; object-fit: cover; border-radius: var(--radius-lg); margin-bottom: var(--spacing-lg);">
+          
+          <h2 style="margin-bottom: var(--spacing-md);">${roommate.name}</h2>
+          
+          <div class="compatibility-score" style="margin-bottom: var(--spacing-lg);">
+            <div class="score-circle" style="background-color: ${compatibilityColor}; margin: 0 auto;">
+              ${roommate.compatibility}%
+            </div>
+            <div class="score-info">
+              <h5 style="margin: 0 0 var(--spacing-sm); color: var(--primary);">Compatibility Match</h5>
+              <p style="margin: 0; color: var(--gray);">Strong match for your lifestyle!</p>
+            </div>
+          </div>
+
+          <div style="background-color: var(--very-light); padding: var(--spacing-lg); border-radius: var(--radius-md); margin-bottom: var(--spacing-lg); text-align: left;">
+            <h5 style="color: var(--primary); margin-bottom: var(--spacing-md);">About ${roommate.name}</h5>
+            <p style="margin: 0; color: var(--gray); line-height: 1.6;">${roommate.bio}</p>
+          </div>
+
+          <div class="row">
+            <div class="col-6">
+              <div style="background-color: var(--very-light); padding: var(--spacing-md); border-radius: var(--radius-md); margin-bottom: var(--spacing-md);">
+                <p style="margin: 0; color: var(--gray); font-size: 0.85rem;">Budget/Month</p>
+                <p style="margin: var(--spacing-xs) 0 0; color: var(--accent); font-weight: 700; font-size: 1.25rem;">$${roommate.budget}</p>
+              </div>
+            </div>
+            <div class="col-6">
+              <div style="background-color: var(--very-light); padding: var(--spacing-md); border-radius: var(--radius-md); margin-bottom: var(--spacing-md);">
+                <p style="margin: 0; color: var(--gray); font-size: 0.85rem;">Move-in Date</p>
+                <p style="margin: var(--spacing-xs) 0 0; color: var(--accent); font-weight: 700; font-size: 1.1rem;">${formatDate(roommate.moveInDate)}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-6">
+              <div style="background-color: var(--very-light); padding: var(--spacing-md); border-radius: var(--radius-md); margin-bottom: var(--spacing-md);">
+                <p style="margin: 0; color: var(--gray); font-size: 0.85rem;">Cleanliness</p>
+                <div style="margin-top: var(--spacing-xs);">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${roommate.cleanliness * 10}%;"></div>
+                  </div>
+                </div>
+                <p style="margin: var(--spacing-xs) 0 0; color: var(--accent); font-weight: 700;">${roommate.cleanliness}/10</p>
+              </div>
+            </div>
+            <div class="col-6">
+              <div style="background-color: var(--very-light); padding: var(--spacing-md); border-radius: var(--radius-md); margin-bottom: var(--spacing-md);">
+                <p style="margin: 0; color: var(--gray); font-size: 0.85rem;">Sociability</p>
+                <div style="margin-top: var(--spacing-xs);">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${roommate.social * 10}%;"></div>
+                  </div>
+                </div>
+                <p style="margin: var(--spacing-xs) 0 0; color: var(--accent); font-weight: 700;">${roommate.social}/10</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: var(--spacing-lg);">
+            <p style="color: var(--gray); font-size: 0.9rem; margin-bottom: var(--spacing-md);">Location: <strong>${roommate.location}</strong></p>
+            <p style="color: var(--gray); font-size: 0.9rem; margin-bottom: var(--spacing-lg);">Sleep Schedule: <strong style="text-transform: capitalize;">${roommate.sleepSchedule}</strong></p>
+          </div>
+
+          <div class="card-actions" style="justify-content: center; gap: var(--spacing-md);">
+            <button class="btn btn-success" style="min-width: 150px;" onclick="sendMatch('${studentId}'); closeModal('roommateModal');">✓ Send Match Request</button>
+            <button class="btn btn-danger" style="min-width: 150px;" onclick="passRoommate('${studentId}'); closeModal('roommateModal');">✕ Pass</button>
+          </div>
+        </div>
+      `;
+
+      openModal('roommateModal');
+    }
+
+    function sendMatch(studentId) {
+      showSuccess(`Match request sent to this roommate!`);
+    }
+
+    function passRoommate(studentId) {
+      filteredRoommates = filteredRoommates.filter(r => r.userId !== studentId);
+      renderRoommates();
+      showSuccess('Roommate passed');
+    }
+
+    const nigerianLocations = [
+      'Akobo', 'Aguda', 'Adeniyi Jones', 'Gbagada', 'Ikoyi', 'Lagos Island', 'Lekki', 'Victoria Island',
+      'Abuja', 'Central Business District', 'Garki', 'Wuse', 'Maitama',
+      'Ibadan', 'Agbowo', 'Orogun', 'Mokola', 'Jericho', 'Bodija',
+      'Kano', 'Tudun Wada', 'Fagge', 'Tarauni',
+      'Port Harcourt', 'Diobu', 'Old Port Harcourt Township',
+      'Enugu', 'Enugu East', 'Independence Layout',
+      'Benin City', 'Ekosodin', 'Oredo',
+      'Calabar', 'Calabar Municipality',
+      'Ilorin', 'Ilorin West',
+      'Warri', 'Warri South'
+    ];
+
+    function handleLocationInput(value) {
+      const suggestions = document.getElementById('location-suggestions');
+      
+      if (value.length === 0) {
+        suggestions.style.display = 'none';
+        return;
+      }
+
+      const filtered = nigerianLocations.filter(loc => 
+        loc.toLowerCase().includes(value.toLowerCase())
+      );
+
+      if (filtered.length === 0) {
+        suggestions.style.display = 'none';
+        return;
+      }
+
+      suggestions.innerHTML = filtered.map(loc => 
+        `<div style="padding: var(--spacing-md); cursor: pointer; border-bottom: 1px solid var(--very-light); hover: background-color: var(--very-light);" onclick="selectLocation('${loc}')">${loc}</div>`
+      ).join('');
+      suggestions.style.display = 'block';
+    }
+
+    function selectLocation(location) {
+      document.getElementById('filter-location').value = location;
+      document.getElementById('location-suggestions').style.display = 'none';
+      applyFilters();
+    }
+
+    document.addEventListener('click', function(e) {
+      if (e.target.id !== 'filter-location' && e.target.id !== 'location-suggestions') {
+        document.getElementById('location-suggestions').style.display = 'none';
+      }
+    });
+
+    function applyFilters() {
+      const location = document.getElementById('filter-location').value;
+      const gender = document.getElementById('filter-gender').value;
+      const budget = parseInt(document.getElementById('filter-budget').value) || Infinity;
+
+      filteredRoommates = allRoommates.filter(roommate => {
+        if (location && roommate.location !== location) return false;
+        if (gender && roommate.gender !== gender) return false;
+        if (roommate.budget > budget) return false;
+        return true;
+      });
+
+      renderRoommates();
+    }
+
+    function resetFilters() {
+      document.getElementById('filter-location').value = '';
+      document.getElementById('filter-gender').value = '';
+      document.getElementById('filter-budget').value = '';
+      document.getElementById('location-suggestions').style.display = 'none';
+      filteredRoommates = [...allRoommates];
+      renderRoommates();
+    }
+  </script>
+</body>
+</html>

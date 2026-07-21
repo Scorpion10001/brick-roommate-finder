@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Choose Your Account Type - BRICK</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="navbar-container">
+      <a href="index.html" class="navbar-brand">
+        <img src="images/brick-logo-new.png" alt="BRICK Logo">
+        BRICK
+      </a>
+      <div class="nav-content">
+        <div class="navbar-links">
+          <a href="login.html" class="btn btn-outline">Login</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); min-height: calc(100vh - 60px); display: flex; align-items: center; justify-content: center; padding: var(--spacing-lg);">
+      <div class="container">
+        <div style="text-align: center; margin-bottom: var(--spacing-2xl);">
+          <h1 style="color: white; margin-bottom: var(--spacing-md);">Choose Your Account Type</h1>
+          <p style="color: rgba(255, 255, 255, 0.9); font-size: 1.1rem;">Select what best describes you</p>
+        </div>
+
+        <div class="row justify-content-center">
+          <!-- Student Card -->
+          <div class="col-md-6">
+            <div class="card" style="border: 3px solid transparent; transition: var(--transition); height: 100%; cursor: pointer;" onclick="window.location.href='signup.html?type=student'">
+              <div style="padding: var(--spacing-xl); text-align: center; display: flex; flex-direction: column; justify-content: center;">
+                <div style="font-size: 3rem; margin-bottom: var(--spacing-lg);">👨‍🎓</div>
+                <h2 style="margin: 0 0 var(--spacing-md) 0; color: var(--primary);">Find Your Perfect Roommate</h2>
+                <p style="color: var(--gray); margin-bottom: var(--spacing-lg); font-size: 0.95rem;">Looking for a roommate to share an apartment and split rent</p>
+                
+                <div style="background-color: var(--very-light); padding: var(--spacing-lg); border-radius: var(--radius-md); text-align: left; margin-bottom: var(--spacing-lg);">
+                  <h5 style="color: var(--primary); margin-bottom: var(--spacing-md);">You'll get:</h5>
+                  <ul style="list-style: none; padding: 0; color: var(--gray);">
+                    <li style="margin-bottom: var(--spacing-sm);">✓ Find compatible roommates</li>
+                    <li style="margin-bottom: var(--spacing-sm);">✓ Get apartment suggestions</li>
+                    <li style="margin-bottom: var(--spacing-sm);">✓ Track shared expenses</li>
+                    <li>✓ Monthly savings plans</li>
+                  </ul>
+                </div>
+                
+                <a href="signup.html?type=student" class="btn btn-primary btn-block" style="width: 100%; margin-top: auto;">Get Started</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: var(--spacing-xl);">
+          <p style="color: white; margin: 0;">Already have an account? <a href="login.html" style="color: #17A2B8; font-weight: 600;">Login here</a></p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/mockData.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/navigation.js"></script>
+  <script>
+    // Add hover effect to cards
+    document.addEventListener('DOMContentLoaded', function() {
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+          this.style.borderColor = 'var(--accent)';
+          this.style.boxShadow = 'var(--shadow-lg)';
+          this.style.transform = 'translateY(-4px)';
+        });
+        card.addEventListener('mouseleave', function() {
+          this.style.borderColor = 'transparent';
+          this.style.boxShadow = 'var(--shadow-md)';
+          this.style.transform = 'translateY(0)';
+        });
+      });
+    });
+  </script>
+</body>
+</html>
